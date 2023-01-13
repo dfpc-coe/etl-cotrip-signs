@@ -35,7 +35,7 @@ export default class Task {
             res = await fetch(url);
 
             incidents.push(...(await res.json()).features);
-        } while (res.headers.has('next-offset') && res.headers.get('next-offset') !== 'None')
+        } while (res.headers.has('next-offset') && res.headers.get('next-offset') !== 'None');
         console.log(`ok - fetched ${incidents.length} incidents`);
 
         const features = {
