@@ -25,7 +25,7 @@ export default class Task {
         if (!this.token) throw new Error('No COTrip API Token Provided');
         if (!this.etl.api) throw new Error('No ETL API URL Provided');
         if (!this.etl.layer) throw new Error('No ETL Layer Provided');
-        if (!this.etl.token) throw new Error('No ETL Token Provided');
+        //if (!this.etl.token) throw new Error('No ETL Token Provided');
     }
 
     async control() {
@@ -34,7 +34,7 @@ export default class Task {
         let res;
         do {
             console.error(`ok - fetching ${++batch} of incidents`);
-            const url = new URL('/api/v1/snowPlows', this.api);
+            const url = new URL('/api/v1/incidents', this.api);
             url.searchParams.append('apiKey', this.token);
             if (res) url.searchParams.append('offset', res.headers.get('next-offset'));
 
@@ -46,25 +46,12 @@ export default class Task {
 
         const features = {
             type: 'FeatureCollection',
-            features: incidents.map((plow) => {
-                const feat = {
-                    id: plow.avl_location.vehicle.id2,
-                    type: 'Feature',
-                    properties: {
-                        type: 'a-f-G',
-                        how: 'm-g',
-                        callsign: `${plow.avl_location.vehicle.fleet} ${plow.avl_location.vehicle.type}`
-                    },
-                    geometry: {
-                        type: 'Point',
-                        coordinates: [
-                            plow.avl_location.position.longitude,
-                            plow.avl_location.position.latitude
-                        ]
-                    }
-                };
+            features: incidents.map((incident) => {
+                incident.id = incident.properties.id;
+                incident.properties.remarks = incident.properties.travelerInformationMessage;
+                incident.properties.callsign = incident.properties.type;
 
-                return feat;
+                return incident;
             })
         };
 
