@@ -44,15 +44,33 @@ export default class Task {
         } while (res.headers.has('next-offset') && res.headers.get('next-offset') !== 'None');
         console.log(`ok - fetched ${incidents.length} incidents`);
 
-        const features = {
-            type: 'FeatureCollection',
-            features: incidents.map((incident) => {
-                incident.id = incident.properties.id;
-                incident.properties.remarks = incident.properties.travelerInformationMessage;
-                incident.properties.callsign = incident.properties.type;
+        const features = [];
+        for (const feature of incidents.map((incident) => {
+            incident.id = incident.properties.id;
+            incident.properties.remarks = incident.properties.travelerInformationMessage;
+            incident.properties.callsign = incident.properties.type;
+            return incident;
+        })) {
+            if (feature.geometry.type.startsWith('Multi')) {
+                const feat = JSON.stringify(feature);
+                const type = feature.geometry.type.replace('Multi', '');
 
-                return incident;
-            })
+                let i = 0;
+                for (const coordinates of feature.geometry.coordinates) {
+                    const new_feat = JSON.parse(feat);
+                    new_feat.geometry = { type, coordinates };
+                    new_feat.id = new_feat.id + '-' + i;
+                    features.push(new_feat);
+                    ++i;
+                }
+            } else {
+                features.push(feature);
+            }
+        };
+
+        const fc = {
+            type: 'FeatureCollection',
+            features: features
         };
 
         const post = await fetch(new URL(`/api/layer/${this.etl.layer}/cot`, this.etl.api), {
@@ -61,7 +79,7 @@ export default class Task {
                 'Authorization': `Bearer ${this.etl.token}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(features)
+            body: JSON.stringify(fc)
         });
 
         if (!post.ok) {
