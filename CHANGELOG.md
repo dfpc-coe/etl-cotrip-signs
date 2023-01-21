@@ -10,6 +10,10 @@
 
 ## Version History
 
+### v1.0.2
+
+- :bug: Fix handler call from Docker
+
 ### v1.0.1
 
 - :bug: Pull from incidents API
