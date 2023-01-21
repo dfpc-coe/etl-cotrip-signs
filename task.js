@@ -33,7 +33,7 @@ export default class Task {
         let batch = -1;
         let res;
         do {
-            console.error(`ok - fetching ${++batch} of incidents`);
+            console.log(`ok - fetching ${++batch} of incidents`);
             const url = new URL('/api/v1/incidents', this.api);
             url.searchParams.append('apiKey', this.token);
             if (res) url.searchParams.append('offset', res.headers.get('next-offset'));
@@ -64,7 +64,12 @@ export default class Task {
             body: JSON.stringify(features)
         });
 
-        console.error(await post.json());
+        if (!post.ok) {
+            console.error(await post.text());
+            throw new Error('Failed to post layer to ETL');
+        } else {
+            console.log(await post.json());
+        }
     }
 }
 
