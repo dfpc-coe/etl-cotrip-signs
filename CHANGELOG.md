@@ -10,6 +10,10 @@
 
 ## Version History
 
+### v1.1.0
+
+- :rocket: Throw a hard error if a POST to the ETL server fails
+
 ### v1.0.2
 
 - :bug: Fix handler call from Docker
