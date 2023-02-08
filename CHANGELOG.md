@@ -10,6 +10,10 @@
 
 ## Version History
 
+### v1.3.0
+
+- :tada: Add Schema Environment Support
+
 ### v1.2.0
 
 - :tada: The ETL server currently doesn't support Multi Geometries so process them into single geoms
