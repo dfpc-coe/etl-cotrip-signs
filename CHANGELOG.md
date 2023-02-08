@@ -10,6 +10,10 @@
 
 ## Version History
 
+### v1.3.1
+
+- :tada: Adjust Environment Name
+
 ### v1.3.0
 
 - :tada: Add Schema Environment Support
