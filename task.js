@@ -25,7 +25,7 @@ export default class Task {
         if (!this.token) throw new Error('No COTrip API Token Provided');
         if (!this.etl.api) throw new Error('No ETL API URL Provided');
         if (!this.etl.layer) throw new Error('No ETL Layer Provided');
-        //if (!this.etl.token) throw new Error('No ETL Token Provided');
+        // if (!this.etl.token) throw new Error('No ETL Token Provided');
     }
 
     static schema() {
@@ -84,7 +84,7 @@ export default class Task {
             } else {
                 features.push(feature);
             }
-        };
+        }
 
         const fc = {
             type: 'FeatureCollection',
@@ -111,7 +111,7 @@ export default class Task {
     }
 }
 
-export async function handler(event={}) {
+export async function handler(event = {}) {
     if (event.type === 'schema') {
         return Task.schema();
     } else {
