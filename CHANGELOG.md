@@ -10,6 +10,10 @@
 
 ## Version History
 
+### v2.0.1
+
+- :bug: Flip Defaults in schema
+
 ### v2.0.0
 
 - :rocket: Update to latest ETL
