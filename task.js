@@ -23,6 +23,18 @@ export default class Task extends ETL {
                         type: 'string',
                         description: 'API Token for CoTrip'
                     },
+                    'Point Geometries': {
+                        type: 'boolean',
+                        description: 'Allow point geometries'
+                    },
+                    'LineString Geometries': {
+                        type: 'boolean',
+                        description: 'Allow LineString geometries'
+                    },
+                    'Polygon Geometries': {
+                        type: 'boolean',
+                        description: 'Allow Polygon Geometries'
+                    },
                     'DEBUG': {
                         type: 'boolean',
                         default: false,
@@ -34,7 +46,17 @@ export default class Task extends ETL {
             return {
                 type: 'object',
                 required: [],
-                properties: {}
+                properties: {
+                    incident_type: {
+                        type: 'string'
+                    },
+                    lastUpdated: {
+                        type: 'string'
+                    },
+                    travelerInformationMessage: {
+                        type: 'string'
+                    }
+                }
             };
         }
     }
@@ -66,6 +88,8 @@ export default class Task extends ETL {
             incident.id = incident.properties.id;
             incident.properties.remarks = incident.properties.travelerInformationMessage;
             incident.properties.callsign = incident.properties.type;
+            incident.properties.incident_type = incident.properties.type;
+            delete incident.properties.type;
             return incident;
         })) {
             if (feature.geometry.type.startsWith('Multi')) {
@@ -85,9 +109,16 @@ export default class Task extends ETL {
             }
         }
 
+        const allowed = [];
+        if (layer.environment['Point Geometries']) allowed.push('Point');
+        if (layer.environment['LineString Geometries']) allowed.push('LineString');
+        if (layer.environment['Polygon Geometries']) allowed.push('Polygon');
+
         const fc = {
             type: 'FeatureCollection',
-            features: features
+            features: features.filter((feat) => {
+                return allowed.includes(feat.geometry.type)
+            })
         };
 
         await this.submit(fc);

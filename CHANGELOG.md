@@ -10,6 +10,10 @@
 
 ## Version History
 
+### v2.1.0
+
+- :rocket: Add new incidents geometry filter & schema
+
 ### v2.0.1
 
 - :bug: Flip Defaults in schema
