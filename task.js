@@ -90,6 +90,8 @@ export default class Task extends ETL {
             incident.properties.callsign = incident.properties.type;
             incident.properties.incident_type = incident.properties.type;
             delete incident.properties.type;
+            delete incident.properties.status;
+            incident.properties.type = 'a-f-G'
             return incident;
         })) {
             if (feature.geometry.type.startsWith('Multi')) {
