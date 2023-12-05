@@ -10,6 +10,10 @@
 
 ## Version History
 
+### v2.2.0
+
+- :bug: remove status property
+
 ### v2.1.0
 
 - :rocket: Add new incidents geometry filter & schema
