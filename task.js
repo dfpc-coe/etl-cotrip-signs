@@ -102,7 +102,8 @@ export default class Task extends ETL {
                     incident_type: incident.properties.type,
                     incident_status: incident.properties.status,
                     startTime: moment(incident.properties.startTime).tz('America/Denver').format('YYYY-MM-DD HH:mm z'),
-                    lastUpdated: moment(incident.properties.lastUpdated).tz('America/Denver').format('YYYY-MM-DD HH:mm z')
+                    lastUpdated: moment(incident.properties.lastUpdated).tz('America/Denver').format('YYYY-MM-DD HH:mm z'),
+                    travelerInformationMessage: incident.properties.travelerInformationMessage
                 },
                 geometry: incident.geometry
             };
