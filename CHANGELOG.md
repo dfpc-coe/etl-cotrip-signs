@@ -10,6 +10,10 @@
 
 ## Version History
 
+### v2.4.0
+
+- :rocket: Add travelerInformationMessage
+
 ### v2.3.0
 
 - :rocket: Add denver timezone & add explicit fields
