@@ -1,5 +1,6 @@
 import fs from 'fs';
 import ETL from '@tak-ps/etl';
+import moment from 'moment-timezone';
 
 try {
     const dotfile = new URL('.env', import.meta.url);
@@ -50,6 +51,12 @@ export default class Task extends ETL {
                     incident_type: {
                         type: 'string'
                     },
+                    incident_status: {
+                        type: 'string'
+                    },
+                    startTime: {
+                        type: 'string'
+                    },
                     lastUpdated: {
                         type: 'string'
                     },
@@ -85,14 +92,20 @@ export default class Task extends ETL {
 
         const features = [];
         for (const feature of incidents.map((incident) => {
-            incident.id = incident.properties.id;
-            incident.properties.remarks = incident.properties.travelerInformationMessage;
-            incident.properties.callsign = incident.properties.type;
-            incident.properties.incident_type = incident.properties.type;
-            delete incident.properties.type;
-            delete incident.properties.status;
-            incident.properties.type = 'a-f-G'
-            return incident;
+            return {
+                id: incident.properties.id,
+                type: 'Feature',
+                properties: {
+                    remarks: incident.properties.travelerInformationMessage,
+                    callsign: incident.properties.type,
+                    type: 'a-f-G',
+                    incident_type: incident.properties.type,
+                    incident_status: incident.properties.status,
+                    startTime: moment(incident.properties.startTime).tz('America/Denver').format('YYYY-MM-DD HH:mm z'),
+                    lastUpdated: moment(incident.properties.lastUpdated).tz('America/Denver').format('YYYY-MM-DD HH:mm z')
+                },
+                geometry: incident.geometry
+            };
         })) {
             if (feature.geometry.type.startsWith('Multi')) {
                 const feat = JSON.stringify(feature);
@@ -119,7 +132,7 @@ export default class Task extends ETL {
         const fc = {
             type: 'FeatureCollection',
             features: features.filter((feat) => {
-                return allowed.includes(feat.geometry.type)
+                return allowed.includes(feat.geometry.type);
             })
         };
 

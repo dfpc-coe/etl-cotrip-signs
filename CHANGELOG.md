@@ -10,6 +10,10 @@
 
 ## Version History
 
+### v2.3.0
+
+- :rocket: Add denver timezone & add explicit fields
+
 ### v2.2.0
 
 - :bug: remove status property
