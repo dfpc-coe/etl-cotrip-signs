@@ -48,21 +48,22 @@ export default class Task extends ETL {
                 type: 'object',
                 required: [],
                 properties: {
-                    incident_type: {
-                        type: 'string'
-                    },
-                    incident_status: {
-                        type: 'string'
-                    },
-                    startTime: {
-                        type: 'string'
-                    },
-                    lastUpdated: {
-                        type: 'string'
-                    },
-                    travelerInformationMessage: {
-                        type: 'string'
-                    }
+                   communicationStatus: { type: "string" },
+                   marker: { type: "number" }
+                   messageText: { type: 'string' },
+                   direction: { type: 'string' },
+                   lastUpdated: { type: 'string' },
+                   messagePreview: { type: 'string' },
+                   displayStatus: { type: 'string' },
+                   name: { type: 'string' },
+                   id: { type: 'string' },
+                   speed: { type: 'number' },
+                   routeName: { type: 'string' },
+                   messageMarkup: { type: 'string' },
+                   publicName: { type: 'string' },
+                   submittedBy: { type: 'string' },
+                   nativeId: { type: 'string' },
+                   activationTime: { type: 'string' },
                 }
             };
         }
@@ -75,37 +76,30 @@ export default class Task extends ETL {
         if (!layer.environment.COTRIP_TOKEN) throw new Error('No COTrip API Token Provided');
         const token = layer.environment.COTRIP_TOKEN;
 
-        const incidents = [];
+        const signs = [];
         let batch = -1;
         let res;
         do {
-            console.log(`ok - fetching ${++batch} of incidents`);
-            const url = new URL('/api/v1/incidents', api);
+            console.log(`ok - fetching ${++batch} of signs`);
+            const url = new URL('/api/v1/signs', api);
             url.searchParams.append('apiKey', token);
             if (res) url.searchParams.append('offset', res.headers.get('next-offset'));
 
             res = await fetch(url);
 
-            incidents.push(...(await res.json()).features);
+            signs.push(...(await res.json()).features);
         } while (res.headers.has('next-offset') && res.headers.get('next-offset') !== 'None');
-        console.log(`ok - fetched ${incidents.length} incidents`);
+        console.log(`ok - fetched ${signs.length} signs`);
 
         const features = [];
-        for (const feature of incidents.map((incident) => {
+        for (const feature of signs.map((sign) => {
+            console.error(sign)
             return {
-                id: incident.properties.id,
+                id: sign.properties.id,
                 type: 'Feature',
                 properties: {
-                    remarks: incident.properties.travelerInformationMessage,
-                    callsign: incident.properties.type,
-                    type: 'a-f-G',
-                    incident_type: incident.properties.type,
-                    incident_status: incident.properties.status,
-                    startTime: moment(incident.properties.startTime).tz('America/Denver').format('YYYY-MM-DD HH:mm z'),
-                    lastUpdated: moment(incident.properties.lastUpdated).tz('America/Denver').format('YYYY-MM-DD HH:mm z'),
-                    travelerInformationMessage: incident.properties.travelerInformationMessage
                 },
-                geometry: incident.geometry
+                geometry: sign.geometry
             };
         })) {
             if (feature.geometry.type.startsWith('Multi')) {
@@ -137,7 +131,7 @@ export default class Task extends ETL {
             })
         };
 
-        await this.submit(fc);
+        //await this.submit(fc);
     }
 }
 
