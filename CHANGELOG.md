@@ -10,9 +10,13 @@
 
 ## Version History
 
-### v2.0.0
+### v3.0.0
 
 - :rocket: Update to latest token strategy
+
+### v2.0.0
+
+- :rocket: Tag Sync
 
 ### v1.0.0
 
