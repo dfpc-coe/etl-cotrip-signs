@@ -10,6 +10,14 @@
 
 ## Version History
 
+### v3.2.0
+
+- :rocket: Update to typescript and latest ETL
+
+### v3.1.0
+
+- :rocket: Update to latest ETL strategy
+
 ### v3.0.0
 
 - :rocket: Update to latest token strategy
