@@ -1,36 +1,47 @@
 import { Static, Type, TSchema } from '@sinclair/typebox';
-import { FeatureCollection, Feature, Geometry } from 'geojson';
-import ETL, { Event, SchemaType, handler as internal, local, env } from '@tak-ps/etl';
+import { Feature, Geometry } from 'geojson';
+import ETL, { Event, SchemaType, handler as internal, local, InputFeatureCollection, DataFlowType, InvocationType } from '@tak-ps/etl';
 
 export default class Task extends ETL {
-    async schema(type: SchemaType = SchemaType.Input): Promise<TSchema> {
-        if (type === SchemaType.Input) {
-            return Type.Object({
-                'COTRIP_TOKEN': Type.String({ description: 'API Token for CoTrip' }),
-                'Point Geometries': Type.Boolean({ description: 'Allow point geometries', default: true }),
-                'LineString Geometries': Type.Boolean({ description: 'Allow LineString geometries', default: true }),
-                'Polygon Geometries': Type.Boolean({ description: 'Allow Polygon Geometries', default: true }),
-                'DEBUG': Type.Boolean({ description: 'Print GeoJSON Features in logs', default: false })
-            });
+    static name = 'etl-cotrip-signs';
+    static flow = [ DataFlowType.Incoming ];
+    static invocation = [ InvocationType.Schedule ];
+
+    async schema(
+        type: SchemaType = SchemaType.Input,
+        flow: DataFlowType = DataFlowType.Incoming
+    ): Promise<TSchema> {
+        if (flow === DataFlowType.Incoming) {
+            if (type === SchemaType.Input) {
+                return Type.Object({
+                    'COTRIP_TOKEN': Type.String({ description: 'API Token for CoTrip' }),
+                    'Point Geometries': Type.Boolean({ description: 'Allow point geometries', default: true }),
+                    'LineString Geometries': Type.Boolean({ description: 'Allow LineString geometries', default: true }),
+                    'Polygon Geometries': Type.Boolean({ description: 'Allow Polygon Geometries', default: true }),
+                    'DEBUG': Type.Boolean({ description: 'Print GeoJSON Features in logs', default: false })
+                });
+            } else {
+                return Type.Object({
+                   communicationStatus: Type.String(),
+                   marker: Type.Number(),
+                   messageText: Type.String(),
+                   direction: Type.String(),
+                   lastUpdated: Type.String(),
+                   messagePreview: Type.String(),
+                   displayStatus: Type.String(),
+                   name: Type.String(),
+                   id: Type.String(),
+                   speed: Type.Number(),
+                   routeName: Type.String(),
+                   messageMarkup: Type.String(),
+                   publicName: Type.String(),
+                   submittedBy: Type.String(),
+                   nativeId: Type.String(),
+                   activationTime: Type.String(),
+                });
+            }
         } else {
-            return Type.Object({
-               communicationStatus: Type.String(),
-               marker: Type.Number(),
-               messageText: Type.String(),
-               direction: Type.String(),
-               lastUpdated: Type.String(),
-               messagePreview: Type.String(),
-               displayStatus: Type.String(),
-               name: Type.String(),
-               id: Type.String(),
-               speed: Type.Number(),
-               routeName: Type.String(),
-               messageMarkup: Type.String(),
-               publicName: Type.String(),
-               submittedBy: Type.String(),
-               nativeId: Type.String(),
-               activationTime: Type.String(),
-            });
+            return Type.Object({});
         }
     }
 
@@ -89,7 +100,7 @@ export default class Task extends ETL {
         if (layer.environment['LineString Geometries']) allowed.push('LineString');
         if (layer.environment['Polygon Geometries']) allowed.push('Polygon');
 
-        const fc: FeatureCollection = {
+        const fc: Static<typeof InputFeatureCollection> = {
             type: 'FeatureCollection',
             features: features.filter((feat) => {
                 return allowed.includes(feat.geometry.type);
@@ -100,8 +111,7 @@ export default class Task extends ETL {
     }
 }
 
-env(import.meta.url)
-await local(new Task(), import.meta.url);
+await local(new Task(import.meta.url), import.meta.url);
 export async function handler(event: Event = {}) {
-    return await internal(new Task(), event);
+    return await internal(new Task(import.meta.url), event);
 }

@@ -10,6 +10,10 @@
 
 ## Version History
 
+### v3.3.0
+
+- :rocket: Add Capabilities API
+
 ### v3.2.0
 
 - :rocket: Update to typescript and latest ETL
