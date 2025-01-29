@@ -1,5 +1,4 @@
 import { Static, Type, TSchema } from '@sinclair/typebox';
-import { Feature, Geometry } from 'geojson';
 import ETL, { Event, SchemaType, handler as internal, local, InputFeatureCollection, DataFlowType, InvocationType } from '@tak-ps/etl';
 
 export default class Task extends ETL {

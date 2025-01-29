@@ -10,6 +10,10 @@
 
 ## Version History
 
+### v3.3.1
+
+- :bug: Fix Lints
+
 ### v3.3.0
 
 - :rocket: Add Capabilities API
