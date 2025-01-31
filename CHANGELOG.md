@@ -10,6 +10,10 @@
 
 ## Version History
 
+### v4.0.0
+
+- :tada: Update to `CloudTAK@v6`
+
 ### v3.3.1
 
 - :bug: Fix Lints
