@@ -1,5 +1,6 @@
+import { Feature } from '@tak-ps/node-cot'
 import { Static, Type, TSchema } from '@sinclair/typebox';
-import ETL, { Event, SchemaType, handler as internal, local, InputFeatureCollection, DataFlowType, InvocationType } from '@tak-ps/etl';
+import ETL, { Event, SchemaType, handler as internal, local, DataFlowType, InvocationType } from '@tak-ps/etl';
 
 const InputSchema = Type.Object({
     'COTRIP_TOKEN': Type.String({ description: 'API Token for CoTrip' }),
@@ -101,7 +102,7 @@ export default class Task extends ETL {
         if (env['LineString Geometries']) allowed.push('LineString');
         if (env['Polygon Geometries']) allowed.push('Polygon');
 
-        const fc: Static<typeof InputFeatureCollection> = {
+        const fc: Static<typeof Feature.InputFeatureCollection> = {
             type: 'FeatureCollection',
             features: features.filter((feat) => {
                 return allowed.includes(feat.geometry.type);
